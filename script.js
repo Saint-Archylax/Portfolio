@@ -304,3 +304,21 @@ if (lightbox) {
     }
   });
 }
+
+const modal = document.getElementById("resumeModal");
+const openBtn = document.getElementById("openResume");
+const closeBtn = document.getElementById("closeResume");
+
+openBtn.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});

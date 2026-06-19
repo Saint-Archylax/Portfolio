@@ -31,10 +31,10 @@
         <a href="#contact">Contact</a>
       </div>
 
-      <a class="nav-resume" href="assets/Archyl-G-Ymbol-Resume.html" download>
-        <span class="material-symbols-outlined" aria-hidden="true">download</span>
-        Resume
-      </a>
+      <button class="nav-resume" id="openResume">
+        <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+        View Resume
+      </button>
     </nav>
   </header>
 
@@ -434,5 +434,30 @@
     <img class="lightbox-image" src="" alt="">
   </div>
   <script src="script.js" defer></script>
+
+
+<div id="resumeModal" class="modal">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <h2>My Resume</h2>
+
+      <div class="modal-actions">
+        <a href="assets/Ymbol-CV-Public.pdf" download="Ymbol-CV-Public.pdf" class="download-btn">
+          Download Resume
+        </a>
+
+        <button id="closeResume" class="close-btn">✕</button>
+      </div>
+    </div>
+
+    <iframe 
+      src="assets/Ymbol-CV-Public.pdf"
+      class="resume-frame">
+    </iframe>
+
+  </div>
+</div>
+
 </body>
 </html>
