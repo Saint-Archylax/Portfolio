@@ -171,6 +171,21 @@
             </div>
           </article>
 
+          <article class="project-card" data-open-modal="metalift-figma-modal">
+            <div class="project-slideshow" aria-label="MetaLift Figma design thumbnail slideshow">
+              <div class="slide active slide-metalift-figma-1"></div>
+              <div class="slide slide-metalift-figma-2"></div>
+              <div class="slide slide-metalift-figma-3"></div>
+              <div class="slide slide-metalift-figma-4"></div>
+            </div>
+            <div class="project-body">
+              <div class="project-tags"><span>Figma</span><span>UI/UX</span><span>Prototype</span></div>
+              <h3>MetaLift Construction Management System Figma Design</h3>
+              <p>My proud Figma project: a polished CMS design and interactive prototype for construction project management workflows.</p>
+              <button class="text-link" type="button" data-open-modal="metalift-figma-modal">View Details <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+            </div>
+          </article>
+
           <article class="project-card" data-open-modal="garbage-modal">
             <div class="project-slideshow" aria-label="Garbage classification project thumbnail slideshow">
               <div class="slide active slide-garbage-1"></div>
@@ -323,7 +338,7 @@
       <h3 id="metalift-title">MetaLift Construction Management System</h3>
       <p>A centralized construction management platform that streamlines project tracking, team management, payroll, inventory monitoring, and financial reporting through five integrated subsystems.</p>
       <p><strong>Technologies:</strong> Laravel, PHP, MySQL</p>
-      <p><strong>My contribution:</strong> Contributed to database-backed workflows, Laravel feature planning, and interface flows for project and operations management.</p>
+      
       <div class="modal-gallery">
         <img src="assets/screenshots-of-cms/Screenshot 2026-06-19 212824.png" alt="MetaLift Team Management">
         <img src="assets/screenshots-of-cms/Screenshot 2026-06-19 213023.png" alt="MetaLift Project Management">
@@ -334,13 +349,33 @@
     </div>
   </div>
 
+  <div class="modal" id="metalift-figma-modal" aria-hidden="true" role="dialog" aria-labelledby="metalift-figma-title">
+    <div class="modal-content">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close project details"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+      <h3 id="metalift-figma-title">MetaLift Construction Management System Figma Design</h3>
+      <p>My proud project in Figma: an interactive CMS design prototype for the MetaLift Construction Management System, focused on clear navigation, organized project workflows, and a polished interface for construction operations.</p>
+      <p><strong>Technologies:</strong> Figma, UI/UX Design, Interactive Prototyping</p>
+        <div class="modal-gallery">
+        <img src="assets/screenshots-figma-cms/1.png" alt="MetaLift Figma design screen 1">
+        <img src="assets/screenshots-figma-cms/2.png" alt="MetaLift Figma design screen 2">
+        <img src="assets/screenshots-figma-cms/3.png" alt="MetaLift Figma design screen 3">
+        <img src="assets/screenshots-figma-cms/4.png" alt="MetaLift Figma design screen 4">
+        <img src="assets/screenshots-figma-cms/5.png" alt="MetaLift Figma design screen 5">
+        <img src="assets/screenshots-figma-cms/6.png" alt="MetaLift Figma design screen 6">
+        <img src="assets/screenshots-figma-cms/7.png" alt="MetaLift Figma design screen 7">
+        <img src="assets/screenshots-figma-cms/8.png" alt="MetaLift Figma design screen 8">
+      </div>
+      <div class="modal-actions"><a class="button button-primary" href="https://www.figma.com/proto/0dci1zZBiS8MAM4gEUxR8k/MetaLift?node-id=1067-1540&t=wdUC5n6YF5u8WRPs-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1067%3A1540" target="_blank" rel="noreferrer">View Figma Project</a></div>
+    </div>
+  </div>
+
   <div class="modal" id="garbage-modal" aria-hidden="true" role="dialog" aria-labelledby="garbage-title">
     <div class="modal-content">
       <button class="modal-close" type="button" data-close-modal aria-label="Close project details"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
       <h3 id="garbage-title">Garbage Classification Using MobileNetV2 and EfficientNet-B0</h3>
       <p>Machine learning-powered waste classification system that identifies six categories of garbage using deep learning models and a mobile-friendly web application.</p>
       <p><strong>Technologies:</strong> Python, TensorFlow, MobileNetV2, EfficientNet-B0</p>
-      <p><strong>My contribution:</strong> Worked on the model-driven classification workflow and the mobile-friendly web experience for presenting predictions.</p>
+      
       <div class="modal-gallery">
         <img src="assets/screenshots-garbage-classification/1.png" alt="EcoSort Main App">
         <img src="assets/screenshots-garbage-classification/2.png" alt="Model Metrics">
@@ -357,7 +392,7 @@
       <h3 id="dota-title">Dota 2 Match Outcome & MVP Prediction</h3>
       <p>Machine learning project that uses Dota 2 match statistics to predict match outcomes and identify MVP players.</p>
       <p><strong>Technologies:</strong> Python, Scikit-learn, Streamlit</p>
-      <p><strong>My contribution:</strong> Built prediction-focused workflows using match statistics, model experimentation, and a simple app interface.</p>
+      
       <div class="modal-actions"><a class="button button-primary" href="#" data-placeholder-link="Dota 2 predictor live demo">Live Demo</a><a class="button button-outline" href="https://github.com/Saint-Archylax/Dota2-Match-Outcome-MVP-Prediction" target="_blank" rel="noreferrer">GitHub Repository</a></div>
     </div>
   </div>
@@ -368,7 +403,7 @@
       <h3 id="restaurant-title">Integrated Restaurant System for Employees and Owners</h3>
       <p>A restaurant management system that streamlines ordering, inventory tracking, sales management, and reporting processes.</p>
       <p><strong>Technologies:</strong> PHP, MySQL, HTML, CSS, JavaScript</p>
-      <p><strong>My contribution:</strong> Helped structure system features, database operations, and user-facing pages for employees and owners.</p>
+     
       <div class="modal-gallery">
         <img src="assets/screenshots-integrated-restaurant-system/1.png" alt="Restaurant System Screen 1">
         <img src="assets/screenshots-integrated-restaurant-system/2.png" alt="Restaurant System Screen 2">
@@ -429,9 +464,27 @@
   </div>
 
   <div class="toast" role="status" aria-live="polite"></div>
+  <div class="modal" id="hosting-expired-modal" aria-hidden="true" role="dialog" aria-labelledby="hosting-expired-title">
+    <div class="modal-content modal-content-notice">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close hosting notice"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+      <h3 id="hosting-expired-title">Hosting Plan Expired</h3>
+      <p>The hosting plan for this demo website has already expired, so the live demo is not available right now. You can still view the project through its GitHub repository button.</p>
+      <p>The only live project links currently available are:</p>
+      <ul class="notice-list">
+        <li>Garbage Classification Using MobileNetV2 and EfficientNet-B0</li>
+        <li>Gym Membership Website Design</li>
+        <li>MetaLift Construction Management System Figma Design, because it is a Figma prototype</li>
+      </ul>
+      <div class="modal-actions">
+        <button class="button button-primary" type="button" data-close-modal>Got it</button>
+      </div>
+    </div>
+  </div>
   <div class="lightbox" id="image-lightbox" role="dialog" aria-hidden="true">
     <button class="lightbox-close" type="button" aria-label="Close image"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    <button class="lightbox-nav lightbox-prev" type="button" aria-label="View previous image"><span class="material-symbols-outlined" aria-hidden="true">chevron_left</span></button>
     <img class="lightbox-image" src="" alt="">
+    <button class="lightbox-nav lightbox-next" type="button" aria-label="View next image"><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
   </div>
   <script src="script.js" defer></script>
 

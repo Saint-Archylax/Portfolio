@@ -136,8 +136,11 @@ function closeModal(modal) {
 
   modal.classList.remove("active");
   modal.setAttribute("aria-hidden", "true");
-  activeModal = null;
-  document.body.classList.remove("menu-open");
+  activeModal = document.querySelector(".modal.active");
+
+  if (!activeModal) {
+    document.body.classList.remove("menu-open");
+  }
 }
 
 function closeActiveModal() {
@@ -178,6 +181,8 @@ document.querySelectorAll(".modal").forEach((modal) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    if (lightbox?.classList.contains("active")) return;
+
     closeMenu();
     closeActiveModal();
   }
@@ -186,7 +191,7 @@ document.addEventListener("keydown", (event) => {
 document.querySelectorAll("[data-placeholder-link]").forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    showToast(`${link.dataset.placeholderLink} is a placeholder. Replace the href with your real link when ready.`);
+    openModal("hosting-expired-modal");
   });
 });
 
@@ -266,15 +271,33 @@ if (contactForm) {
 const lightbox = document.getElementById("image-lightbox");
 const lightboxImage = document.querySelector(".lightbox-image");
 const lightboxClose = document.querySelector(".lightbox-close");
+const lightboxPrev = document.querySelector(".lightbox-prev");
+const lightboxNext = document.querySelector(".lightbox-next");
+let activeGalleryImages = [];
+let activeGalleryIndex = 0;
 
 if (lightbox) {
+  function showLightboxImage(index) {
+    if (!lightboxImage || activeGalleryImages.length === 0) return;
+
+    activeGalleryIndex = (index + activeGalleryImages.length) % activeGalleryImages.length;
+    const image = activeGalleryImages[activeGalleryIndex];
+    lightboxImage.src = image.src;
+    lightboxImage.alt = image.alt;
+  }
+
+  function moveLightbox(direction) {
+    showLightboxImage(activeGalleryIndex + direction);
+  }
+
   // Use event delegation for gallery images
   document.addEventListener("click", (event) => {
     const img = event.target.closest(".modal-gallery img");
     if (!img || !lightboxImage) return;
-    
-    lightboxImage.src = img.src;
-    lightboxImage.alt = img.alt;
+
+    activeGalleryImages = Array.from(img.closest(".modal-gallery").querySelectorAll("img"));
+    activeGalleryIndex = activeGalleryImages.indexOf(img);
+    showLightboxImage(activeGalleryIndex);
     lightbox.classList.add("active");
     lightbox.setAttribute("aria-hidden", "false");
     document.body.classList.add("menu-open");
@@ -284,11 +307,22 @@ if (lightbox) {
   function closeLightbox() {
     lightbox.classList.remove("active");
     lightbox.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("menu-open");
+
+    if (!document.querySelector(".modal.active")) {
+      document.body.classList.remove("menu-open");
+    }
   }
 
   if (lightboxClose) {
     lightboxClose.addEventListener("click", closeLightbox);
+  }
+
+  if (lightboxPrev) {
+    lightboxPrev.addEventListener("click", () => moveLightbox(-1));
+  }
+
+  if (lightboxNext) {
+    lightboxNext.addEventListener("click", () => moveLightbox(1));
   }
 
   lightbox.addEventListener("click", (event) => {
@@ -299,8 +333,14 @@ if (lightbox) {
 
   // Close with ESC key
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && lightbox.classList.contains("active")) {
+    if (!lightbox.classList.contains("active")) return;
+
+    if (event.key === "Escape") {
       closeLightbox();
+    } else if (event.key === "ArrowLeft") {
+      moveLightbox(-1);
+    } else if (event.key === "ArrowRight") {
+      moveLightbox(1);
     }
   });
 }
