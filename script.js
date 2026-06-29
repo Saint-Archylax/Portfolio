@@ -7,6 +7,303 @@ const sections = navLinks
 const toast = document.querySelector(".toast");
 let toastTimer;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const aetherBackgroundCanvas = document.querySelector(".aether-bg-canvas");
+const typewriterText = document.querySelector(".typewriter-text");
+const typewriterPhrases = [
+  "Aspiring Software Developer",
+  "UI/UX Enthusiast",
+  "Versatile CS Student"
+];
+
+function setupAetherBackground(canvas) {
+  if (!canvas || prefersReducedMotion.matches) return;
+
+  const gl = canvas.getContext("webgl2", {
+    alpha: true,
+    antialias: false,
+    depth: false,
+    stencil: false,
+    powerPreference: "low-power"
+  });
+
+  if (!gl) return;
+
+  const vertexSource = `#version 300 es
+precision highp float;
+in vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}`;
+
+  const fragmentSource = `#version 300 es
+precision highp float;
+out vec4 color;
+uniform float time;
+uniform vec2 resolution;
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T time
+#define MN min(R.x,R.y)
+
+float pattern(vec2 uv) {
+  float d = 0.0;
+  for (float i = 0.0; i < 3.0; i++) {
+    uv.x += sin(T * (0.22 + i * 0.08) + uv.y * 1.45) * 0.18;
+    d += 0.0068 / max(abs(uv.x), 0.026);
+  }
+  return d;
+}
+
+vec3 scene(vec2 uv) {
+  vec3 col = vec3(0.0);
+  uv = vec2(atan(uv.x, uv.y) * 0.31831, -log(max(length(uv), 0.08)) + T * 0.18);
+
+  for (float i = 0.0; i < 3.0; i++) {
+    float line = pattern(uv + i * 7.0 / MN);
+    if (i < 1.0) {
+      col += vec3(0.08, 0.25, 0.95) * line * 1.18;
+    } else if (i < 2.0) {
+      col += vec3(0.0, 0.62, 0.72) * line * 0.96;
+    } else {
+      col += vec3(0.55, 0.78, 1.0) * line * 0.72;
+    }
+  }
+
+  return col;
+}
+
+void main() {
+  vec2 uv = (FC - 0.5 * R) / MN;
+  vec2 drift = uv;
+  drift.y += R.x > R.y ? 0.5 : 0.5 * (R.y / R.x);
+
+  float grid = 0.00055 / max(abs(sin(uv.x * 11.0) * cos(uv.y * 11.0)), 0.06);
+  vec3 col = scene(drift) + vec3(0.04, 0.16, 0.55) * grid;
+  col *= smoothstep(1.08, 0.14, length(uv));
+  col = pow(col, vec3(0.9));
+
+  color = vec4(col, 0.9);
+}`;
+
+  function compileShader(type, source) {
+    const shader = gl.createShader(type);
+    if (!shader) {
+      throw new Error("Unable to create Aether background shader.");
+    }
+
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw new Error(message || "Unable to compile Aether background shader.");
+    }
+
+    return shader;
+  }
+
+  let program;
+
+  try {
+    const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSource);
+    const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+    program = gl.createProgram();
+    if (!program) {
+      throw new Error("Unable to create Aether background shader program.");
+    }
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      const message = gl.getProgramInfoLog(program);
+      gl.deleteProgram(program);
+      throw new Error(message || "Unable to link Aether background shader.");
+    }
+  } catch (error) {
+    console.warn("Aether background shader unavailable:", error);
+    return;
+  }
+
+  const vertices = new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]);
+  const buffer = gl.createBuffer();
+  if (!buffer) {
+    gl.deleteProgram(program);
+    return;
+  }
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+  gl.useProgram(program);
+  const positionLocation = gl.getAttribLocation(program, "position");
+  const timeLocation = gl.getUniformLocation(program, "time");
+  const resolutionLocation = gl.getUniformLocation(program, "resolution");
+  if (positionLocation < 0 || timeLocation === null || resolutionLocation === null) {
+    gl.deleteBuffer(buffer);
+    gl.deleteProgram(program);
+    return;
+  }
+
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  gl.clearColor(0, 0, 0, 0);
+
+  const maxDpr = 1.5;
+  let animationFrame = null;
+  let isVisible = true;
+  let lastFrameTime = 0;
+  let resizeObserver = null;
+  let visibilityObserver = null;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+    const width = Math.max(1, Math.floor(rect.width * dpr));
+    const height = Math.max(1, Math.floor(rect.height * dpr));
+
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawFrame(now) {
+    animationFrame = null;
+
+    if (!isVisible || document.hidden) return;
+
+    if (now - lastFrameTime >= 24) {
+      lastFrameTime = now;
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.uniform1f(timeLocation, now * 0.001);
+      gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    animationFrame = window.requestAnimationFrame(drawFrame);
+  }
+
+  function stopAnimation() {
+    if (!animationFrame) return;
+
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+  }
+
+  function startAnimation() {
+    if (animationFrame || !isVisible || document.hidden) return;
+
+    animationFrame = window.requestAnimationFrame(drawFrame);
+  }
+
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      stopAnimation();
+      return;
+    }
+
+    startAnimation();
+  }
+
+  resizeCanvas();
+
+  if ("ResizeObserver" in window) {
+    resizeObserver = new ResizeObserver(resizeCanvas);
+    resizeObserver.observe(canvas);
+  } else {
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+  }
+
+  if ("IntersectionObserver" in window) {
+    visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          startAnimation();
+        } else {
+          stopAnimation();
+        }
+      },
+      { threshold: 0.02 }
+    );
+    visibilityObserver.observe(document.body);
+  }
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  startAnimation();
+
+  window.addEventListener("pagehide", () => {
+    stopAnimation();
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+    } else {
+      window.removeEventListener("resize", resizeCanvas);
+    }
+
+    if (visibilityObserver) {
+      visibilityObserver.disconnect();
+    }
+
+    gl.deleteBuffer(buffer);
+    gl.deleteProgram(program);
+  });
+}
+
+setupAetherBackground(aetherBackgroundCanvas);
+
+if (typewriterText) {
+  if (prefersReducedMotion.matches) {
+    typewriterText.textContent = typewriterPhrases[0];
+  } else {
+    let phraseIndex = 0;
+    let characterIndex = 0;
+    let isDeleting = false;
+
+    function runTypewriter() {
+      const phrase = typewriterPhrases[phraseIndex];
+
+      if (isDeleting) {
+        characterIndex -= 1;
+        typewriterText.textContent = phrase.slice(0, characterIndex);
+
+        if (characterIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % typewriterPhrases.length;
+          window.setTimeout(runTypewriter, 280);
+          return;
+        }
+
+        window.setTimeout(runTypewriter, 34);
+        return;
+      }
+
+      characterIndex += 1;
+      typewriterText.textContent = phrase.slice(0, characterIndex);
+
+      if (characterIndex === phrase.length) {
+        isDeleting = true;
+        window.setTimeout(runTypewriter, 1400);
+        return;
+      }
+
+      window.setTimeout(runTypewriter, 66);
+    }
+
+    typewriterText.textContent = "";
+    window.setTimeout(runTypewriter, 360);
+  }
+}
 
 function showToast(message) {
   if (!toast) return;

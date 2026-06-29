@@ -9,9 +9,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=aether-dark-1">
 </head>
 <body>
+  <canvas class="aether-bg-canvas" aria-hidden="true"></canvas>
+  <div class="aether-bg-overlay" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
@@ -42,7 +44,7 @@
     <section class="hero section-pad reveal" id="home">
       <div class="hero-copy">
         <p class="eyebrow">Computer Science Student</p>
-        <h1>Archyl G. Ymbol <span>Aspiring Software Developer</span></h1>
+        <h1>Archyl G. Ymbol <span class="hero-subtitle"><span class="typewriter-text">Aspiring Software Developer</span><span class="typewriter-cursor" aria-hidden="true"></span></span></h1>
         <p class="hero-intro">
           I am a Bachelor of Science in Computer Science student at the University of Mindanao seeking an Internship/OJT opportunity in the technology industry. I enjoy creating user-friendly interfaces and practical digital solutions, while staying comfortable with backend work when needed.
         </p>
@@ -52,7 +54,7 @@
             <span class="material-symbols-outlined" aria-hidden="true">workspaces</span>
             View Projects
           </a>
-          <a class="button button-outline" href="assets/Archyl-G-Ymbol-Resume.html" download>
+          <a class="button button-outline" href="assets/Ymbol-CV-Public.pdf" download="Ymbol-CV-Public.pdf">
             <span class="material-symbols-outlined" aria-hidden="true">download</span>
             Download Resume
           </a>
@@ -299,7 +301,7 @@
             <a href="https://github.com/Saint-Archylax" target="_blank" rel="noreferrer"><span class="material-symbols-outlined" aria-hidden="true">code</span> GitHub Profile</a>
           </div>
 
-          <a class="button button-outline" href="assets/Archyl-G-Ymbol-Resume.html" download>
+          <a class="button button-outline" href="assets/Ymbol-CV-Public.pdf" download="Ymbol-CV-Public.pdf">
             <span class="material-symbols-outlined" aria-hidden="true">download</span>
             Download Resume
           </a>
@@ -486,7 +488,7 @@
     <img class="lightbox-image" src="" alt="">
     <button class="lightbox-nav lightbox-next" type="button" aria-label="View next image"><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
   </div>
-  <script src="script.js" defer></script>
+  <script src="script.js?v=aether-dark-1" defer></script>
 
 
 <div id="resumeModal" class="modal">
