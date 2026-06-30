@@ -9,7 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=aether-dark-1">
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("portfolio-theme");
+        document.documentElement.dataset.theme = savedTheme === "light" ? "light" : "dark";
+      } catch (error) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css?v=theme-helper-1">
 </head>
 <body>
   <canvas class="aether-bg-canvas" aria-hidden="true"></canvas>
@@ -33,10 +43,25 @@
         <a href="#contact">Contact</a>
       </div>
 
-      <button class="nav-resume" id="openResume">
-        <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
-        View Resume
-      </button>
+      <div class="nav-actions">
+        <span class="theme-switch-wrap">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true">
+            <span class="theme-toggle-track" aria-hidden="true">
+              <span class="material-symbols-outlined theme-icon theme-icon-sun">light_mode</span>
+              <span class="material-symbols-outlined theme-icon theme-icon-moon">dark_mode</span>
+              <span class="theme-toggle-thumb"></span>
+            </span>
+          </button>
+          <span class="theme-helper" id="themeHelper" role="status" aria-live="polite">
+            Background too distracting? Try simple mode.
+          </span>
+        </span>
+
+        <button class="nav-resume" id="openResume">
+          <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+          View Resume
+        </button>
+      </div>
     </nav>
   </header>
 
@@ -488,7 +513,7 @@
     <img class="lightbox-image" src="" alt="">
     <button class="lightbox-nav lightbox-next" type="button" aria-label="View next image"><span class="material-symbols-outlined" aria-hidden="true">chevron_right</span></button>
   </div>
-  <script src="script.js?v=aether-dark-1" defer></script>
+  <script src="script.js?v=theme-helper-1" defer></script>
 
 
 <div id="resumeModal" class="modal">

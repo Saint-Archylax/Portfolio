@@ -8,15 +8,77 @@ const toast = document.querySelector(".toast");
 let toastTimer;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const aetherBackgroundCanvas = document.querySelector(".aether-bg-canvas");
+const themeToggle = document.querySelector("#themeToggle");
+const themeHelper = document.querySelector("#themeHelper");
 const typewriterText = document.querySelector(".typewriter-text");
 const typewriterPhrases = [
   "Aspiring Software Developer",
   "UI/UX Enthusiast",
   "Versatile CS Student"
 ];
+const THEME_STORAGE_KEY = "portfolio-theme";
+const THEME_HELPER_TEXT = {
+  dark: "Background too distracting? Try simple mode.",
+  light: "Too simple? Switch back to dark mode."
+};
+let aetherBackgroundController = null;
+let activeTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+
+function saveThemePreference(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    console.warn("Unable to save theme preference:", error);
+  }
+}
+
+function syncThemeToggle(theme) {
+  if (!themeToggle) return;
+
+  const isDark = theme === "dark";
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+}
+
+function syncThemeHelper(theme) {
+  if (!themeHelper) return;
+
+  themeHelper.textContent = THEME_HELPER_TEXT[theme];
+  themeHelper.classList.remove("is-visible");
+  void themeHelper.offsetWidth;
+  themeHelper.classList.add("is-visible");
+}
+
+function applyTheme(theme, options = {}) {
+  const nextTheme = theme === "light" ? "light" : "dark";
+  activeTheme = nextTheme;
+
+  document.documentElement.dataset.theme = nextTheme;
+  document.body.classList.toggle("light-mode", nextTheme === "light");
+  document.body.classList.toggle("dark-mode", nextTheme === "dark");
+  syncThemeToggle(nextTheme);
+  syncThemeHelper(nextTheme);
+
+  if (options.persist !== false) {
+    saveThemePreference(nextTheme);
+  }
+
+  if (aetherBackgroundController) {
+    aetherBackgroundController.setEnabled(nextTheme === "dark");
+  }
+}
+
+applyTheme(activeTheme, { persist: false });
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    applyTheme(activeTheme === "dark" ? "light" : "dark");
+  });
+}
 
 function setupAetherBackground(canvas) {
-  if (!canvas || prefersReducedMotion.matches) return;
+  if (!canvas || prefersReducedMotion.matches) return null;
 
   const gl = canvas.getContext("webgl2", {
     alpha: true,
@@ -155,6 +217,7 @@ void main() {
 
   const maxDpr = 1.5;
   let animationFrame = null;
+  let isEnabled = activeTheme === "dark";
   let isVisible = true;
   let lastFrameTime = 0;
   let resizeObserver = null;
@@ -177,7 +240,7 @@ void main() {
   function drawFrame(now) {
     animationFrame = null;
 
-    if (!isVisible || document.hidden) return;
+    if (!isEnabled || !isVisible || document.hidden) return;
 
     if (now - lastFrameTime >= 24) {
       lastFrameTime = now;
@@ -200,7 +263,7 @@ void main() {
   }
 
   function startAnimation() {
-    if (animationFrame || !isVisible || document.hidden) return;
+    if (animationFrame || !isEnabled || !isVisible || document.hidden) return;
 
     animationFrame = window.requestAnimationFrame(drawFrame);
   }
@@ -239,7 +302,9 @@ void main() {
   }
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
-  startAnimation();
+  if (isEnabled) {
+    startAnimation();
+  }
 
   window.addEventListener("pagehide", () => {
     stopAnimation();
@@ -258,9 +323,27 @@ void main() {
     gl.deleteBuffer(buffer);
     gl.deleteProgram(program);
   });
+
+  return {
+    setEnabled(enabled) {
+      isEnabled = Boolean(enabled);
+
+      if (isEnabled) {
+        resizeCanvas();
+        startAnimation();
+      } else {
+        stopAnimation();
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
+    }
+  };
 }
 
-setupAetherBackground(aetherBackgroundCanvas);
+aetherBackgroundController = setupAetherBackground(aetherBackgroundCanvas);
+
+if (aetherBackgroundController) {
+  aetherBackgroundController.setEnabled(activeTheme === "dark");
+}
 
 if (typewriterText) {
   if (prefersReducedMotion.matches) {
